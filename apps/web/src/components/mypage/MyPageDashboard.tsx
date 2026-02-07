@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight, Package, MapPin, CreditCard, Headphones, Settings, Bell } from 'lucide-react';
+import { ChevronRight, Package, MapPin, CreditCard, Headphones, Settings, Bell, Store } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MyPageDashboard() {
@@ -106,6 +106,46 @@ export default function MyPageDashboard() {
                     })}
                 </div>
             ))}
+
+            {/* 그린링크 비즈 홍보 배너 */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 mx-4 mt-4 rounded-xl border border-green-200">
+                <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-green-500 rounded-xl flex items-center justify-center">
+                        <Store className="w-7 h-7 text-white" />
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="font-bold text-gray-800">내가 찾던 손님</h3>
+                        <p className="text-sm text-gray-600">모두 그린링크에 있어요</p>
+                        <p className="text-xs text-green-600 mt-1">내 동네 근처 이웃 152,847명</p>
+                    </div>
+                </div>
+                <a
+                    href="http://localhost:3001"
+                    className="mt-4 w-full py-3 bg-green-600 text-white font-semibold rounded-lg flex items-center justify-center gap-2 hover:bg-green-700 transition-colors"
+                >
+                    <Store className="w-5 h-5" />
+                    그린링크 비즈 시작하기
+                    <ChevronRight className="w-5 h-5" />
+                </a>
+            </div>
+
+            {/* 비즈프로필 관리 메뉴 */}
+            <div className="bg-white border-b-8 border-gray-100 mt-4">
+                <h3 className="px-4 pt-4 pb-2 font-bold text-gray-800">비즈니스</h3>
+                <a
+                    href="http://localhost:3001"
+                    className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+                >
+                    <div className="flex items-center gap-3">
+                        <Store className="w-5 h-5 text-green-600" />
+                        <span className="text-gray-700">비즈프로필 관리</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">NEW</span>
+                        <ChevronRight className="w-5 h-5 text-gray-400" />
+                    </div>
+                </a>
+            </div>
         </div>
     );
 }

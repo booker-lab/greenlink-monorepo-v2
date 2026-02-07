@@ -88,6 +88,27 @@ export default function HomePage() {
                     ))}
                 </div>
             </div>
+
+            {/* 그린링크 비즈 홍보 배너 */}
+            <div className="m-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                <div className="text-center mb-4">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-green-500 rounded-full mb-2">
+                        <span className="text-2xl">🏪</span>
+                    </div>
+                    <h3 className="font-bold text-gray-800">내가 찾던 손님</h3>
+                    <p className="text-sm text-gray-600">모두 그린링크에 있어요</p>
+                    <p className="text-xs text-green-600 mt-1">내 동네 근처 이웃 152,847명</p>
+                </div>
+                <a
+                    href="http://localhost:3001"
+                    className="block w-full py-3 bg-gray-900 text-white font-semibold rounded-lg text-center hover:bg-gray-800 transition-colors"
+                >
+                    그린링크 비즈 시작하기 →
+                </a>
+                <p className="text-center text-xs text-gray-500 mt-2">
+                    비즈프로필은 등록부터 사용까지 <span className="text-green-600 font-medium">무료예요!</span>
+                </p>
+            </div>
         </div>
     );
 }
