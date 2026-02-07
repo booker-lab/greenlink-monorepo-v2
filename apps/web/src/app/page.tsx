@@ -1,7 +1,20 @@
+'use client';
+
 import Link from "next/link";
-import { Search, ShoppingCart, Bell, Home, Grid, User } from "lucide-react";
+import { Search, ShoppingCart, Bell } from "lucide-react";
+import HomeBanner from "@/components/home/HomeBanner";
 
 export default function HomePage() {
+    // Sample product data
+    const products = [
+        { id: 1, name: '신선한 로즈마리', price: 12000, image: '🌿', seller: '초록농장' },
+        { id: 2, name: '튤립 꽃다발', price: 25000, image: '🌷', seller: '꽃밭농원' },
+        { id: 3, name: '다육이 세트', price: 18000, image: '🌵', seller: '선인장마을' },
+        { id: 4, name: '허브 모음', price: 15000, image: '🌱', seller: '향기정원' },
+        { id: 5, name: '장미 한 송이', price: 8000, image: '🌹', seller: '로즈가든' },
+        { id: 6, name: '해바라기', price: 10000, image: '🌻', seller: '해바라기농장' },
+    ];
+
     return (
         <div className="min-h-screen pb-20">
             {/* 헤더 */}
@@ -25,73 +38,56 @@ export default function HomePage() {
                 </div>
             </header>
 
-            {/* 배너 */}
-            <section className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6">
-                <h2 className="text-lg font-bold mb-2">🌱 신선한 로컬 농산물</h2>
-                <p className="text-sm text-green-100">우리 동네 농가에서 직접 만나보세요</p>
-            </section>
+            {/* 배너 (v1에서 마이그레이션) */}
+            <HomeBanner />
 
-            {/* 퀵 카테고리 */}
-            <section className="p-4">
-                <div className="grid grid-cols-4 gap-4">
-                    {["🌷 화훼", "🥬 채소", "🍎 과일", "🌾 곡물"].map((cat, idx) => (
-                        <button
-                            key={idx}
-                            className="flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
-                        >
-                            <span className="text-2xl mb-1">{cat.split(" ")[0]}</span>
-                            <span className="text-xs text-gray-600">{cat.split(" ")[1]}</span>
-                        </button>
+            {/* Quick Category Icons */}
+            <div className="bg-white p-4 border-b border-gray-100">
+                <div className="grid grid-cols-4 gap-4 text-center">
+                    {['🌿 채소', '🍎 과일', '🌸 화훼', '🌾 곡물'].map((category, idx) => (
+                        <Link key={idx} href="/category" className="flex flex-col items-center gap-2 hover:opacity-80">
+                            <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center text-2xl">
+                                {category.split(' ')[0]}
+                            </div>
+                            <span className="text-xs text-gray-600">{category.split(' ')[1]}</span>
+                        </Link>
                     ))}
                 </div>
-            </section>
+            </div>
 
-            {/* 추천 상품 */}
-            <section className="p-4">
-                <h3 className="font-bold text-gray-800 mb-3">🔥 오늘의 추천</h3>
+            {/* Today's Special */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 border-b border-gray-100">
+                <h2 className="font-bold text-gray-800 mb-2">오늘의 특가</h2>
                 <div className="grid grid-cols-2 gap-3">
-                    {[
-                        { name: "싱싱한 장미 한 다발", price: 15000, emoji: "🌹" },
-                        { name: "유기농 상추 세트", price: 8000, emoji: "🥬" },
-                        { name: "제철 딸기 1kg", price: 12000, emoji: "🍓" },
-                        { name: "튤립 꽃다발", price: 20000, emoji: "🌷" },
-                    ].map((product, idx) => (
-                        <div key={idx} className="bg-white border border-gray-100 rounded-lg p-3">
-                            <div className="text-4xl text-center mb-2 py-4 bg-gray-50 rounded">
-                                {product.emoji}
-                            </div>
-                            <h4 className="text-sm font-medium text-gray-800 line-clamp-1">
-                                {product.name}
-                            </h4>
-                            <p className="text-green-600 font-bold">
-                                {product.price.toLocaleString()}원
-                            </p>
+                    {products.slice(0, 2).map((product) => (
+                        <div key={product.id} className="bg-white rounded-lg p-3 shadow-sm">
+                            <div className="text-4xl mb-2 text-center">{product.image}</div>
+                            <h3 className="font-semibold text-sm text-gray-800 mb-1">{product.name}</h3>
+                            <p className="text-xs text-gray-500 mb-2">{product.seller}</p>
+                            <p className="text-green-600 font-bold">{product.price.toLocaleString()}원</p>
                         </div>
                     ))}
                 </div>
-            </section>
+            </div>
 
-            {/* 하단 네비게이션 */}
-            <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-                <div className="max-w-lg mx-auto flex justify-around items-center h-16">
-                    <Link href="/" className="flex flex-col items-center text-green-600">
-                        <Home className="w-6 h-6" />
-                        <span className="text-xs mt-1">홈</span>
-                    </Link>
-                    <Link href="/category" className="flex flex-col items-center text-gray-400 hover:text-gray-600">
-                        <Grid className="w-6 h-6" />
-                        <span className="text-xs mt-1">카테고리</span>
-                    </Link>
-                    <Link href="/search" className="flex flex-col items-center text-gray-400 hover:text-gray-600">
-                        <Search className="w-6 h-6" />
-                        <span className="text-xs mt-1">검색</span>
-                    </Link>
-                    <Link href="/mypage" className="flex flex-col items-center text-gray-400 hover:text-gray-600">
-                        <User className="w-6 h-6" />
-                        <span className="text-xs mt-1">마이</span>
-                    </Link>
+            {/* Product Feed */}
+            <div className="bg-white">
+                <div className="p-4 border-b border-gray-100">
+                    <h2 className="font-bold text-gray-800">이번 주 인기 상품</h2>
                 </div>
-            </nav>
+                <div className="grid grid-cols-2 gap-px bg-gray-100">
+                    {products.map((product) => (
+                        <div key={product.id} className="bg-white p-4">
+                            <div className="text-5xl mb-3 text-center bg-gray-50 rounded-lg py-6">
+                                {product.image}
+                            </div>
+                            <h3 className="font-semibold text-sm text-gray-800 mb-1">{product.name}</h3>
+                            <p className="text-xs text-gray-500 mb-2">{product.seller}</p>
+                            <p className="text-green-600 font-bold text-base">{product.price.toLocaleString()}원</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }
