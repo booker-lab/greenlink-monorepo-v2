@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { X, MapPin, Check, ChevronRight, Search, Camera, Image, FileText, Phone, ChevronLeft } from "lucide-react";
+import { X, Check, ChevronRight, Search, Camera, Image, FileText, Phone, ChevronLeft } from "lucide-react";
 
 type Step =
-    | 'landing'
     | 'terms'
     | 'name'
     | 'category'
@@ -19,7 +18,7 @@ type Step =
 
 export default function RegisterPage() {
     const router = useRouter();
-    const [step, setStep] = useState<Step>('landing');
+    const [step, setStep] = useState<Step>('terms');
 
     // Form states
     const [termsAgreed, setTermsAgreed] = useState({ all: false, required: false, marketing: false });
@@ -60,7 +59,7 @@ export default function RegisterPage() {
     };
 
     const stepOrder: Step[] = [
-        'landing', 'terms', 'name', 'category', 'location',
+        'terms', 'name', 'category', 'location',
         'info-prompt', 'profile-photo', 'gallery', 'intro', 'phone', 'additional'
     ];
 
@@ -69,8 +68,8 @@ export default function RegisterPage() {
         if (currentIndex < stepOrder.length - 1) {
             setStep(stepOrder[currentIndex + 1]);
         } else {
-            alert('비즈프로필이 생성되었습니다!');
-            router.push('/');
+            // 등록 완료 - 대시보드로 이동
+            router.push('/dashboard');
         }
     };
 
@@ -99,60 +98,21 @@ export default function RegisterPage() {
     return (
         <div className="min-h-screen bg-white flex flex-col">
             {/* 헤더 */}
-            {step !== 'landing' && (
-                <header className="flex items-center justify-between p-4 border-b border-gray-100">
-                    <button onClick={() => router.push('/')} className="text-gray-600 hover:text-gray-800">
-                        <X className="w-6 h-6" />
-                    </button>
-                    {/* Progress bar */}
-                    <div className="flex-1 mx-4 h-1 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-green-500 transition-all duration-300"
-                            style={{ width: `${getProgress()}%` }}
-                        />
-                    </div>
-                </header>
-            )}
-
-            {/* Step 1: 랜딩 */}
-            {step === 'landing' && (
-                <div className="flex-1 flex flex-col">
-                    <header className="p-4">
-                        <button onClick={() => router.push('/')} className="text-gray-600">
-                            <X className="w-6 h-6" />
-                        </button>
-                    </header>
-                    <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                            내가 찾던 손님<br />모두 그린링크에 있어요
-                        </h1>
-                        <div className="flex items-center gap-1 text-gray-500 text-sm mt-4">
-                            <MapPin className="w-4 h-4" />
-                            <span>내 동네 근처 이웃</span>
-                        </div>
-                        <p className="text-4xl font-bold text-gray-900 mt-2">152,847명</p>
-                        <div className="w-full max-w-sm mt-8 bg-amber-100 rounded-2xl p-8">
-                            <div className="bg-white/50 rounded-xl p-6 border-2 border-dashed border-amber-200">
-                                <div className="flex justify-center">
-                                    <div className="bg-orange-500 text-white rounded-full p-3 shadow-lg">
-                                        <MapPin className="w-8 h-8" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <p className="text-gray-600 mt-8">
-                            비즈프로필은 등록부터 사용까지 <span className="text-green-600 font-bold">무료예요!</span>
-                        </p>
-                    </div>
-                    <div className="p-4 pb-8">
-                        <button onClick={handleNext} className="w-full py-4 bg-gray-900 text-white font-semibold rounded-xl">
-                            비즈프로필 만들기
-                        </button>
-                    </div>
+            <header className="flex items-center justify-between p-4 border-b border-gray-100">
+                <button onClick={() => router.push('/')} className="text-gray-600 hover:text-gray-800">
+                    <X className="w-6 h-6" />
+                </button>
+                {/* Progress bar */}
+                <div className="flex-1 mx-4 h-1 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                        className="h-full bg-green-500 transition-all duration-300"
+                        style={{ width: `${getProgress()}%` }}
+                    />
                 </div>
-            )}
+            </header>
 
-            {/* Step 2: 약관 동의 */}
+
+            {/* Step 1: 약관 동의 */}
             {step === 'terms' && (
                 <div className="flex-1 flex flex-col px-6">
                     <div className="flex-1 pt-4">
