@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { X, Check, ChevronRight, Search, Camera, Image, FileText, Phone, ChevronLeft } from "lucide-react";
+import { X, Check, ChevronRight, Search, Camera, Image, FileText, Phone, ChevronLeft, MapPin } from "lucide-react";
 
 type Step =
+    | 'landing'
     | 'terms'
     | 'name'
     | 'category'
@@ -18,7 +19,7 @@ type Step =
 
 export default function RegisterPage() {
     const router = useRouter();
-    const [step, setStep] = useState<Step>('terms');
+    const [step, setStep] = useState<Step>('landing');
 
     // Form states
     const [termsAgreed, setTermsAgreed] = useState({ all: false, required: false, marketing: false });
@@ -59,7 +60,7 @@ export default function RegisterPage() {
     };
 
     const stepOrder: Step[] = [
-        'terms', 'name', 'category', 'location',
+        'landing', 'terms', 'name', 'category', 'location',
         'info-prompt', 'profile-photo', 'gallery', 'intro', 'phone', 'additional'
     ];
 
@@ -97,20 +98,58 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-screen bg-white flex flex-col">
-            {/* 헤더 */}
-            <header className="flex items-center justify-between p-4 border-b border-gray-100">
-                <button onClick={() => router.push('/')} className="text-gray-600 hover:text-gray-800">
-                    <X className="w-6 h-6" />
-                </button>
-                {/* Progress bar */}
-                <div className="flex-1 mx-4 h-1 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                        className="h-full bg-green-500 transition-all duration-300"
-                        style={{ width: `${getProgress()}%` }}
-                    />
-                </div>
-            </header>
+            {/* 헤더 - landing에서는 다른 헤더 표시 */}
+            {step === 'landing' ? (
+                <header className="p-4">
+                    <button onClick={() => router.push('/')} className="text-gray-600 hover:text-gray-800">
+                        <X className="w-6 h-6" />
+                    </button>
+                </header>
+            ) : (
+                <header className="flex items-center justify-between p-4 border-b border-gray-100">
+                    <button onClick={() => router.push('/')} className="text-gray-600 hover:text-gray-800">
+                        <X className="w-6 h-6" />
+                    </button>
+                    {/* Progress bar */}
+                    <div className="flex-1 mx-4 h-1 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-green-500 transition-all duration-300"
+                            style={{ width: `${getProgress()}%` }}
+                        />
+                    </div>
+                </header>
+            )}
 
+            {/* Step 0: 랜딩 */}
+            {step === 'landing' && (
+                <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+                    <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                        내가 찾던 손님<br />모두 그린링크에 있어요
+                    </h1>
+                    <div className="flex items-center gap-1 text-gray-500 text-sm mt-4">
+                        <MapPin className="w-4 h-4" />
+                        <span>내 동네 근처 이웃</span>
+                    </div>
+                    <p className="text-4xl font-bold text-green-600 mt-2">152,847명</p>
+                    <div className="w-full max-w-sm mt-8 bg-amber-100 rounded-2xl p-8">
+                        <div className="bg-white/50 rounded-xl p-6 border-2 border-dashed border-amber-200">
+                            <div className="flex justify-center">
+                                <div className="bg-orange-500 text-white rounded-full p-3 shadow-lg">
+                                    <MapPin className="w-8 h-8" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p className="text-gray-600 mt-8">
+                        비즈프로필은 등록부터 사용까지 <span className="text-green-600 font-bold">무료예요!</span>
+                    </p>
+                    <div className="absolute bottom-0 left-0 right-0 p-4 pb-8">
+                        <button onClick={handleNext} className="w-full py-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors">
+                            비즈프로필 만들기
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Step 1: 약관 동의 */}
             {step === 'terms' && (
@@ -222,10 +261,14 @@ export default function RegisterPage() {
                             )}
                         </div>
                         {location && (
-                            <button onClick={handleNext} className="w-full text-left p-4 hover:bg-gray-50 rounded-lg">
+                            <button onClick={() => { }} className="w-full text-left p-4 hover:bg-gray-50 rounded-lg border border-green-500 bg-green-50">
                                 <p className="text-gray-800">경기도 이천시 {location}</p>
                             </button>
                         )}
+                    </div>
+                    <div className="p-4 pb-8 flex gap-3">
+                        <button onClick={handlePrev} className="flex-1 py-4 bg-white border border-gray-200 text-gray-700 font-semibold rounded-xl">이전</button>
+                        <button onClick={handleNext} disabled={!canProceed()} className="flex-1 py-4 bg-gray-900 text-white font-semibold rounded-xl disabled:bg-gray-200 disabled:text-gray-400">다음</button>
                     </div>
                 </div>
             )}
