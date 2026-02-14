@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import {
     ChevronLeft, ChevronRight, ChevronDown, Share, Menu,
     Megaphone, FileText, Ticket, Calendar, Camera, Clock,
-    Globe, Shield, Home, MessageSquare, Star, Image, Plus, Package, Trash2
+    Globe, Shield, Home, MessageSquare, Star, Image, Plus, Package, Trash2,
+    ExternalLink, Eye
 } from "lucide-react";
 import { DEAR_ORCHID_FARM } from "@greenlink/lib";
 import { useProductStore } from "@greenlink/lib";
@@ -139,6 +140,27 @@ export default function DashboardPage() {
                             </button>
                         </div>
 
+                        {/* 📱 내 스토어 미리보기 (Web 앱 연동) */}
+                        <a
+                            href="http://localhost:3000"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all group"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                                        <Eye className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div>
+                                        <h2 className="font-bold text-white text-lg">내 스토어 미리보기</h2>
+                                        <p className="text-green-100 text-sm mt-0.5">소비자 앱에서 내 상품이 어떻게 보이는지 확인</p>
+                                    </div>
+                                </div>
+                                <ExternalLink className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
+                            </div>
+                        </a>
+
                         {/* 퀵 액션 버튼들 */}
                         <div className="grid grid-cols-4 gap-3">
                             {[
@@ -219,6 +241,15 @@ export default function DashboardPage() {
                                                     )}
                                                 </p>
                                             </div>
+                                            <a
+                                                href={`http://localhost:3000/product/${product.id}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                title="소비자 앱에서 보기"
+                                            >
+                                                <ExternalLink className="w-4 h-4" />
+                                            </a>
                                             <button
                                                 onClick={() => removeProduct(product.id)}
                                                 className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
