@@ -1,6 +1,6 @@
 // 그린링크 v2 - 디어 오키드 초기 데이터 (1호 입점 농가)
 
-import type { Farm, Product, PinkTemperature } from './types';
+import type { Farm, Product, PinkTemperature, Review } from './types';
 
 /** 디어 오키드 - 1호 입점 농가 */
 export const DEAR_ORCHID_FARM: Farm = {
@@ -115,3 +115,73 @@ export const DEFAULT_PINK_TEMPERATURE: PinkTemperature = {
     emoji: '♥',
     description: '그린링크를 시작한 새 회원',
 };
+
+/** Mock 후기 데이터 (팔도감 벤치마킹) */
+export const MOCK_REVIEWS: Review[] = [
+    {
+        id: 'rev-001',
+        productId: 'prod-001',
+        author: '난초사랑',
+        rating: 5,
+        content: '재구매입니다. 보세란이 정말 예쁘고 상태가 좋아서 자꾸 생각나요~ 선물용으로도 딱이에요!',
+        option: '보세란 (중품) 1분',
+        images: ['🌸'],
+        createdAt: '2026-02-12',
+        helpful: 24,
+    },
+    {
+        id: 'rev-002',
+        productId: 'prod-001',
+        author: '이천화원',
+        rating: 5,
+        content: '화원에서 직접 방문하고 주문했는데 배송도 빠르고 포장도 꼼꼼해요. 다음에도 주문할게요!',
+        option: '보세란 (중품) 3분',
+        images: [],
+        createdAt: '2026-02-10',
+        helpful: 18,
+    },
+    {
+        id: 'rev-003',
+        productId: 'prod-002',
+        author: '초보정원사',
+        rating: 4,
+        content: '풍란 향이 정말 좋아요. 근데 관리가 살짝 어려울 수 있으니 초보분은 석곡부터 추천합니다.',
+        option: '풍란 (대품) 1분',
+        images: ['🪻'],
+        createdAt: '2026-02-08',
+        helpful: 12,
+    },
+    {
+        id: 'rev-004',
+        productId: 'prod-004',
+        author: '꽃선물남',
+        rating: 5,
+        content: '어머니 생신 선물로 드렸는데 정말 좋아하셨어요! 고급 화분까지 포함이라 가성비 최고입니다.',
+        option: '동양란 선물세트 1세트',
+        images: ['🎁'],
+        createdAt: '2026-02-05',
+        helpful: 31,
+    },
+    {
+        id: 'rev-005',
+        productId: 'prod-003',
+        author: '식물킬러탈출',
+        rating: 5,
+        content: '석곡은 정말 키우기 쉽네요! 물만 잘 주면 되고, 3개월째 잘 자라고 있어요.',
+        option: '석곡 (소품) 2분',
+        images: ['🌿'],
+        createdAt: '2026-02-03',
+        helpful: 15,
+    },
+    {
+        id: 'rev-006',
+        productId: 'prod-005',
+        author: '난초마스터',
+        rating: 4,
+        content: '난석 품질 좋습니다. 통기성이 기존에 쓰던 것보다 확실히 나아요. 대용량이라 오래 쓸 수 있어요.',
+        option: '난석 (배양토) 5L 1포',
+        images: [],
+        createdAt: '2026-01-28',
+        helpful: 8,
+    },
+];

@@ -70,3 +70,16 @@ export interface NaverStoreConfig {
     storeId: string;
     isConnected: boolean;
 }
+
+/** 상품 후기 (팔도감 벤치마킹) */
+export interface Review {
+    id: string;
+    productId: string;
+    author: string;
+    rating: number;         // 1~5
+    content: string;
+    option?: string;        // 구매 옵션 (예: '500g*3팩')
+    images: string[];       // emoji 또는 URL
+    createdAt: string;
+    helpful: number;        // 도움이 됐어요 수
+}

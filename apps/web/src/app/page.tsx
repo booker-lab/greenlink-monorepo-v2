@@ -147,7 +147,7 @@ export default function HomePage() {
                 <h2 className="font-bold text-gray-800 mb-2">오늘의 특가 🔥</h2>
                 <div className="grid grid-cols-2 gap-3">
                     {products.filter(p => p.originalPrice).map((product) => (
-                        <div key={product.id} className="bg-white rounded-lg p-3 shadow-sm">
+                        <Link key={product.id} href={`/product/${product.id}`} className="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
                             <div className="text-4xl mb-2 text-center">{product.images[0]}</div>
                             <h3 className="font-semibold text-sm text-gray-800 mb-1">{product.name}</h3>
                             <p className="text-xs text-gray-500 mb-1">{farm.name}</p>
@@ -162,7 +162,7 @@ export default function HomePage() {
                                     {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
                                 </span>
                             )}
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>
@@ -174,7 +174,7 @@ export default function HomePage() {
                 </div>
                 <div className="grid grid-cols-2 gap-px bg-gray-100">
                     {products.map((product) => (
-                        <div key={product.id} className="bg-white p-4">
+                        <Link key={product.id} href={`/product/${product.id}`} className="bg-white p-4 hover:bg-gray-50 transition-colors">
                             <div className="text-5xl mb-3 text-center bg-gray-50 rounded-lg py-6">
                                 {product.images[0]}
                             </div>
@@ -182,7 +182,7 @@ export default function HomePage() {
                             <p className="text-xs text-gray-500 mb-1">{farm.name} · {farm.location.city}</p>
                             <p className="text-green-600 font-bold text-base">{product.price.toLocaleString()}원</p>
                             <p className="text-xs text-gray-400 mt-0.5">재고 {product.quantity}{product.unit}</p>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>
