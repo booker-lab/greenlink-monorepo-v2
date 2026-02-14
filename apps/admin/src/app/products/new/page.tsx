@@ -1,21 +1,26 @@
 'use client';
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Camera, Plus, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Camera, X } from "lucide-react";
+import { useProductStore, DEAR_ORCHID_FARM } from "@greenlink/lib";
 
 export default function NewProductPage() {
+    const router = useRouter();
+    const addProduct = useProductStore((state) => state.addProduct);
+
     const [images, setImages] = useState<string[]>([]);
     const [productName, setProductName] = useState("");
     const [price, setPrice] = useState("");
     const [quantity, setQuantity] = useState("");
+    const [unit, setUnit] = useState("분");
     const [description, setDescription] = useState("");
 
+    const sampleEmojis = ["🌸", "🪻", "🌿", "🎁", "🌺", "🌹", "🌷"];
+
     const handleImageUpload = () => {
-        // 사진 업로드 시뮬레이션 (실제 구현시 file input 사용)
-        const sampleImages = ["🌷", "🌿", "🌹", "🌻"];
         if (images.length < 3) {
-            setImages([...images, sampleImages[images.length]]);
+            setImages([...images, sampleEmojis[images.length % sampleEmojis.length]]);
         }
     };
 
@@ -24,7 +29,21 @@ export default function NewProductPage() {
     };
 
     const handleSubmit = () => {
-        alert("상품이 등록되었습니다!");
+        if (!productName || !price || !quantity) return;
+
+        addProduct({
+            farmId: DEAR_ORCHID_FARM.id,
+            name: productName,
+            price: parseInt(price),
+            quantity: parseInt(quantity),
+            unit,
+            description,
+            images: images.length > 0 ? images : ['📦'],
+            category: DEAR_ORCHID_FARM.subcategory,
+            status: 'active',
+        });
+
+        router.push('/dashboard');
     };
 
     return (
@@ -32,13 +51,14 @@ export default function NewProductPage() {
             {/* 헤더 */}
             <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
                 <div className="flex items-center justify-between px-4 py-3">
-                    <Link href="/" className="text-gray-800">
+                    <button onClick={() => router.back()} className="text-gray-800">
                         <ArrowLeft className="w-6 h-6" />
-                    </Link>
+                    </button>
                     <h1 className="text-lg font-bold">상품 등록</h1>
                     <button
                         onClick={handleSubmit}
-                        className="text-green-600 font-semibold"
+                        disabled={!productName || !price || !quantity}
+                        className="text-green-600 font-semibold disabled:text-gray-300"
                     >
                         완료
                     </button>
@@ -87,7 +107,7 @@ export default function NewProductPage() {
                         type="text"
                         value={productName}
                         onChange={(e) => setProductName(e.target.value)}
-                        placeholder="예: 싱싱한 장미 한 다발"
+                        placeholder="예: 보세란 (중품)"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                 </section>
@@ -111,22 +131,34 @@ export default function NewProductPage() {
                     </div>
                 </section>
 
-                {/* 수량 */}
+                {/* 수량 & 단위 */}
                 <section>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         수량
                     </label>
-                    <div className="relative">
-                        <input
-                            type="number"
-                            value={quantity}
-                            onChange={(e) => setQuantity(e.target.value)}
-                            placeholder="0"
-                            className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        />
-                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
-                            개
-                        </span>
+                    <div className="flex gap-3">
+                        <div className="relative flex-1">
+                            <input
+                                type="number"
+                                value={quantity}
+                                onChange={(e) => setQuantity(e.target.value)}
+                                placeholder="0"
+                                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            />
+                        </div>
+                        <select
+                            value={unit}
+                            onChange={(e) => setUnit(e.target.value)}
+                            className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+                        >
+                            <option value="분">분</option>
+                            <option value="포기">포기</option>
+                            <option value="포">포</option>
+                            <option value="송이">송이</option>
+                            <option value="세트">세트</option>
+                            <option value="개">개</option>
+                            <option value="박스">박스</option>
+                        </select>
                     </div>
                 </section>
 

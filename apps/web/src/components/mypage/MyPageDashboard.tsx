@@ -1,13 +1,16 @@
 import React from 'react';
 import { ChevronRight, Package, MapPin, CreditCard, Headphones, Settings, Bell, Store } from 'lucide-react';
 import Link from 'next/link';
+import { DEFAULT_PINK_TEMPERATURE } from '@greenlink/lib';
 
 export default function MyPageDashboard() {
+    const pinkTemp = DEFAULT_PINK_TEMPERATURE;
+
     const recentProducts = [
-        { id: 1, name: '신선한 로즈마리', image: '🌿' },
-        { id: 2, name: '튤립 꽃다발', image: '🌷' },
-        { id: 3, name: '다육이 세트', image: '🌵' },
-        { id: 4, name: '허브 모음', image: '🌱' },
+        { id: 1, name: '보세란 (중품)', image: '🌸' },
+        { id: 2, name: '풍란 (대품)', image: '🪻' },
+        { id: 3, name: '석곡 (소품)', image: '🌿' },
+        { id: 4, name: '동양란 선물세트', image: '🎁' },
     ];
 
     const menuSections = [
@@ -46,6 +49,24 @@ export default function MyPageDashboard() {
                         <h2 className="text-xl font-bold">정의</h2>
                         <p className="text-sm opacity-90">그린 등급 🌱 새싹</p>
                     </div>
+                </div>
+
+                {/* 핑크 온도 (소비자 신뢰 지표) */}
+                <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 mb-3">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium opacity-90">내 핑크 온도</span>
+                        <div className="flex items-center gap-1">
+                            <span className="text-lg">{pinkTemp.emoji}</span>
+                            <span className="text-xl font-black">{pinkTemp.value}°C</span>
+                        </div>
+                    </div>
+                    <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-gradient-to-r from-pink-300 to-pink-400 rounded-full transition-all"
+                            style={{ width: `${pinkTemp.value}%` }}
+                        />
+                    </div>
+                    <p className="text-xs opacity-70 mt-1.5">{pinkTemp.level} 단계 · {pinkTemp.description}</p>
                 </div>
 
                 {/* Points/Coupon Card */}

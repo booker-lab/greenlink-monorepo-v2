@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import {
     ChevronLeft, ChevronRight, ChevronDown, Share, Menu,
     Megaphone, FileText, Ticket, Calendar, Camera, Clock,
-    Globe, Shield, Home, MessageSquare, Star, Image
+    Globe, Shield, Home, MessageSquare, Star, Image, Plus, Package, Trash2
 } from "lucide-react";
+import { DEAR_ORCHID_FARM } from "@greenlink/lib";
+import { useProductStore } from "@greenlink/lib";
 
 type Tab = 'home' | 'news' | 'reviews' | 'photos';
 
@@ -14,13 +16,22 @@ export default function DashboardPage() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<Tab>('home');
 
-    // Mock business data
+    // 디어 오키드 실제 데이터 사용
     const business = {
-        name: '초록농장',
-        location: '증포동',
-        category: '채소/과일',
+        name: DEAR_ORCHID_FARM.name,
+        location: DEAR_ORCHID_FARM.location.district,
+        category: `${DEAR_ORCHID_FARM.category}/${DEAR_ORCHID_FARM.subcategory}`,
         createdAt: '2026년 02월',
+        greenTemp: DEAR_ORCHID_FARM.greenTemperature,
+        certifications: DEAR_ORCHID_FARM.certifications,
+        followers: DEAR_ORCHID_FARM.followers,
+        description: DEAR_ORCHID_FARM.description,
     };
+
+    // Zustand 스토어에서 상품 가져오기
+    const products = useProductStore((state) => state.products);
+    const removeProduct = useProductStore((state) => state.removeProduct);
+    const farmProducts = products.filter(p => p.farmId === DEAR_ORCHID_FARM.id);
 
     return (
         <div className="min-h-screen bg-white flex flex-col">
@@ -49,9 +60,15 @@ export default function DashboardPage() {
                         </button>
                         <p className="text-sm text-gray-500 mt-1">{business.location} · {business.category}</p>
                     </div>
-                    <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium text-gray-700 transition-colors">
-                        단골 관리
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <div className="text-center">
+                            <span className="text-xs text-gray-500">단골</span>
+                            <p className="font-bold text-green-600">{business.followers}</p>
+                        </div>
+                        <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium text-gray-700 transition-colors">
+                            단골 관리
+                        </button>
+                    </div>
                 </div>
 
                 {/* 탭 네비게이션 */}
@@ -66,8 +83,8 @@ export default function DashboardPage() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as Tab)}
                             className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
-                                    ? 'border-gray-900 text-gray-900'
-                                    : 'border-transparent text-gray-400 hover:text-gray-600'
+                                ? 'border-gray-900 text-gray-900'
+                                : 'border-transparent text-gray-400 hover:text-gray-600'
                                 }`}
                         >
                             {tab.label}
@@ -80,6 +97,31 @@ export default function DashboardPage() {
             {activeTab === 'home' && (
                 <div className="flex-1 overflow-y-auto pb-20">
                     <div className="p-4 space-y-4">
+
+                        {/* 🌡️ 그린 온도 카드 */}
+                        <GreenTemperatureCard
+                            value={business.greenTemp.value}
+                            level={business.greenTemp.level}
+                            emoji={business.greenTemp.emoji}
+                            description={business.greenTemp.description}
+                        />
+
+                        {/* 농업경영체 인증 */}
+                        {business.certifications.filter(c => c.verified).length > 0 && (
+                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-4 border border-green-200">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                                        <Shield className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-green-800">농업경영체 인증 완료 ✓</p>
+                                        <p className="text-xs text-green-600 mt-0.5">
+                                            {business.certifications[0].name} · {business.certifications[0].issuedAt}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* 홍보 시작하기 카드 */}
                         <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-5 border border-orange-100">
@@ -116,12 +158,12 @@ export default function DashboardPage() {
 
                         {/* 최근 사진 */}
                         <div className="flex gap-3">
-                            <div className="relative w-40 h-40 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl overflow-hidden shadow-lg">
+                            <div className="relative w-40 h-40 bg-gradient-to-br from-pink-300 to-pink-500 rounded-2xl overflow-hidden shadow-lg">
                                 <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-sm rounded-lg text-xs text-white font-medium">
                                     방금 전
                                 </div>
                                 <div className="w-full h-full flex items-center justify-center">
-                                    <span className="text-5xl">🥬</span>
+                                    <span className="text-5xl">🌸</span>
                                 </div>
                             </div>
                             <button className="flex-1 h-40 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center text-gray-400 hover:border-green-400 hover:text-green-500 hover:bg-green-50/50 transition-all">
@@ -130,20 +172,63 @@ export default function DashboardPage() {
                             </button>
                         </div>
 
-                        {/* 사업자 인증하기 */}
-                        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    <Shield className="w-5 h-5 text-green-600" />
+                        {/* 🛒 등록 상품 리스트 */}
+                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                            <div className="flex items-center justify-between p-5 pb-3">
+                                <div>
+                                    <h3 className="font-bold text-gray-900 text-lg">내 상품</h3>
+                                    <p className="text-xs text-gray-400 mt-0.5">등록된 상품 {farmProducts.length}개</p>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="font-bold text-gray-900">사업자 인증 완료하기</h3>
-                                    <p className="text-sm text-gray-500 mt-1">인증을 완료하면 지금보다 더 많은 고객에게 노출돼요.</p>
-                                    <button className="text-green-600 font-semibold text-sm mt-3 hover:text-green-700 transition-colors">
-                                        지금 인증하기 →
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={() => router.push('/products/new')}
+                                    className="flex items-center gap-1 px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    상품 등록
+                                </button>
                             </div>
+                            {farmProducts.length === 0 ? (
+                                <div className="p-8 text-center">
+                                    <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                                    <p className="text-gray-500 text-sm">아직 등록된 상품이 없어요</p>
+                                    <p className="text-gray-400 text-xs mt-1">첫 상품을 등록해보세요!</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-gray-50">
+                                    {farmProducts.map((product) => (
+                                        <div key={product.id} className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 transition-colors">
+                                            <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
+                                                {product.images[0] || '📦'}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium text-gray-800 text-sm truncate">{product.name}</p>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <span className="text-green-600 font-bold text-sm">
+                                                        {product.price.toLocaleString()}원
+                                                    </span>
+                                                    {product.originalPrice && (
+                                                        <span className="text-gray-400 text-xs line-through">
+                                                            {product.originalPrice.toLocaleString()}원
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-gray-400 mt-0.5">
+                                                    재고 {product.quantity}{product.unit}
+                                                    {product.status === 'soldout' && (
+                                                        <span className="ml-1 text-red-500">· 품절</span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <button
+                                                onClick={() => removeProduct(product.id)}
+                                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* 업체 정보 누락 안내 */}
@@ -199,11 +284,11 @@ export default function DashboardPage() {
                                     <h3 className="font-bold text-gray-900 text-lg">소개</h3>
                                     <p className="text-xs text-gray-400 mt-1">생성일: {business.createdAt}</p>
                                 </div>
-                                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-500 rounded-full flex items-center justify-center shadow-md">
-                                    <span className="text-xl">🌱</span>
+                                <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-pink-500 rounded-full flex items-center justify-center shadow-md">
+                                    <span className="text-xl">{DEAR_ORCHID_FARM.profileEmoji}</span>
                                 </div>
                             </div>
-                            <p className="text-sm text-gray-500 mb-4">사장님 또는 업체 소개를 작성해보세요.</p>
+                            <p className="text-sm text-gray-600 mb-4">{business.description}</p>
                             <div className="flex gap-2">
                                 <button className="flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors text-sm">
                                     사업자 정보 관리
@@ -237,7 +322,7 @@ export default function DashboardPage() {
 
                         {/* 푸터 안내문 */}
                         <div className="text-xs text-gray-400 leading-relaxed pt-4 pb-8">
-                            <p className="font-medium text-gray-500 mb-2">마지막 수정일 2026년 2월 6일</p>
+                            <p className="font-medium text-gray-500 mb-2">마지막 수정일 2026년 2월 14일</p>
                             <p>
                                 그린링크를 통해 홍보되는 게시글에는, 개별 판매자가 직접 입점하거나
                                 채팅 기능을 통해 상품을 판매하는 경우가 포함되어 있습니다.
@@ -276,8 +361,8 @@ export default function DashboardPage() {
             {activeTab === 'photos' && (
                 <div className="flex-1 p-4">
                     <div className="grid grid-cols-3 gap-1">
-                        <div className="aspect-square bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
-                            <span className="text-3xl">🥬</span>
+                        <div className="aspect-square bg-gradient-to-br from-pink-300 to-pink-500 rounded-lg flex items-center justify-center">
+                            <span className="text-3xl">🌸</span>
                         </div>
                         <button className="aspect-square border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-green-400 hover:text-green-500 hover:bg-green-50 transition-all">
                             <Camera className="w-6 h-6" />
@@ -303,6 +388,56 @@ export default function DashboardPage() {
                     ))}
                 </div>
             </nav>
+        </div>
+    );
+}
+
+// 🌡️ 그린 온도 게이지 컴포넌트
+function GreenTemperatureCard({ value, level, emoji, description }: {
+    value: number;
+    level: string;
+    emoji: string;
+    description: string;
+}) {
+    // 온도 게이지: 0~100 범위에서 비율 계산
+    const percentage = Math.min(Math.max(value, 0), 100);
+
+    // 온도에 따른 색상
+    const getGaugeColor = (temp: number) => {
+        if (temp < 30) return 'from-blue-400 to-blue-500';
+        if (temp < 40) return 'from-green-400 to-green-500';
+        if (temp < 50) return 'from-green-500 to-emerald-500';
+        if (temp < 60) return 'from-yellow-400 to-orange-400';
+        return 'from-orange-500 to-red-500';
+    };
+
+    return (
+        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+                <div>
+                    <h3 className="font-bold text-gray-900 text-lg">그린 온도</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">{description}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="text-2xl">{emoji}</span>
+                    <div className="text-right">
+                        <p className="text-2xl font-black text-green-600">{value}°C</p>
+                        <p className="text-xs text-gray-500">{level} 단계</p>
+                    </div>
+                </div>
+            </div>
+            {/* 온도 게이지 바 */}
+            <div className="relative w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                    className={`absolute left-0 top-0 h-full bg-gradient-to-r ${getGaugeColor(value)} rounded-full transition-all duration-700 ease-out`}
+                    style={{ width: `${percentage}%` }}
+                />
+            </div>
+            <div className="flex justify-between mt-1.5 text-xs text-gray-400">
+                <span>0°C</span>
+                <span>50°C</span>
+                <span>100°C</span>
+            </div>
         </div>
     );
 }
