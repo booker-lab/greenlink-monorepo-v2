@@ -6,8 +6,9 @@ import {
     ChevronLeft, ChevronRight, ChevronDown, Share, Menu,
     Megaphone, FileText, Ticket, Calendar, Camera, Clock,
     Globe, Shield, Home, MessageSquare, Star, Image, Plus, Package, Trash2,
-    ExternalLink, Eye
+    ExternalLink, Eye, Truck
 } from "lucide-react";
+import Link from "next/link";
 import { DEAR_ORCHID_FARM } from "@greenlink/lib";
 import { useProductStore } from "@greenlink/lib";
 
@@ -106,6 +107,22 @@ export default function DashboardPage() {
                             emoji={business.greenTemp.emoji}
                             description={business.greenTemp.description}
                         />
+
+                        {/* 🚚 오늘의 배송 */}
+                        <Link href="/delivery" className="block bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-4 border border-emerald-200 hover:shadow-md transition-all">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
+                                        <Truck className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div>
+                                        <h2 className="font-bold text-gray-900">오늘의 배송</h2>
+                                        <p className="text-sm text-emerald-600 mt-0.5">배송 관리 바로가기</p>
+                                    </div>
+                                </div>
+                                <ChevronRight className="w-5 h-5 text-gray-300" />
+                            </div>
+                        </Link>
 
                         {/* 농업경영체 인증 */}
                         {business.certifications.filter(c => c.verified).length > 0 && (

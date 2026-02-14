@@ -83,3 +83,54 @@ export interface Review {
     createdAt: string;
     helpful: number;        // 도움이 됐어요 수
 }
+
+// ───────── 배송 시스템 (PV5 MVP) ─────────
+
+/** 주문 상태 */
+export type OrderStatus = 'ORDERED' | 'PREPARING' | 'DISPATCHED' | 'DELIVERING' | 'COMPLETED' | 'CANCELLED';
+
+/** 배송 상태 */
+export type DeliveryStatus = 'PENDING' | 'PICKED_UP' | 'IN_TRANSIT' | 'DELIVERED';
+
+/** 주문 */
+export interface Order {
+    id: string;
+    productId: string;
+    farmId: string;
+    buyerName: string;
+    buyerPhone: string;
+    buyerAddress: string;
+    quantity: number;
+    totalPrice: number;
+    status: OrderStatus;
+    deliveryDate: string;       // YYYY-MM-DD (예약 배송일)
+    orderedAt: string;          // 주문 시각
+    message?: string;           // 배송 메시지
+    deliveryTaskId?: string;    // 연결된 배송 태스크
+}
+
+/** 배송 태스크 (기사용) */
+export interface DeliveryTask {
+    id: string;
+    orderId: string;
+    farmId: string;
+    status: DeliveryStatus;
+    pickupAddress: string;      // 픽업지 (농장)
+    deliveryAddress: string;    // 배송지
+    recipientName: string;
+    recipientPhone: string;
+    items: string[];            // 상품명 리스트
+    priority: number;           // 배송 우선순위 (1이 가장 높음)
+    photoUrls: string[];        // 배송 완료 사진
+    notes?: string;             // 배송 참고사항
+    pickedUpAt?: string;
+    deliveredAt?: string;
+    createdAt: string;
+}
+
+/** 일일 배송 쿼터 */
+export interface DailyQuota {
+    date: string;               // YYYY-MM-DD
+    maxOrders: number;          // 최대 주문 수량
+    currentOrders: number;      // 현재 주문 수량
+}

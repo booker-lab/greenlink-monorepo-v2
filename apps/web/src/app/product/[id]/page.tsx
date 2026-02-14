@@ -196,19 +196,57 @@ export default function ProductDetailPage() {
                 )}
             </div>
 
-            {/* ───────── 6. 배송 안내 배너 (팔도감 스타일) ───────── */}
+            {/* ───────── 6. 배송일 선택 (예약 주문 시스템) ───────── */}
             <div className="px-4 py-3 border-b border-gray-100">
-                <div className="bg-blue-50 rounded-xl p-3.5 flex items-start gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Truck className="w-5 h-5 text-blue-600" />
+                <div className="bg-blue-50 rounded-xl p-3.5">
+                    <div className="flex items-start gap-3 mb-3">
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Truck className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold text-gray-800">산지 직송 · 무료배송</p>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                                {farm.location.city} {farm.location.district}에서 PV5 신선 직배송
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="text-sm font-bold text-gray-800">산지 직송 · 무료배송</p>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                            {farm.location.city} {farm.location.district}에서 직접 배송해드려요
-                        </p>
-                        <p className="text-xs text-blue-600 font-medium mt-1">
-                            주문 후 2~3일 내 수령 가능
+
+                    {/* 배송 희망일 선택 */}
+                    <div className="bg-white rounded-lg p-3 border border-blue-100">
+                        <p className="text-xs font-bold text-gray-700 mb-2">📅 배송 희망일 선택</p>
+                        <div className="flex gap-1.5 overflow-x-auto pb-1">
+                            {Array.from({ length: 10 }, (_, i) => {
+                                const d = new Date();
+                                d.setDate(d.getDate() + i + 2); // 최소 D+2
+                                const dateStr = d.toISOString().split('T')[0];
+                                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                                const dayOfWeek = d.getDay();
+                                const isHoliday = dayOfWeek === 0;
+
+                                return (
+                                    <button
+                                        key={dateStr}
+                                        disabled={isHoliday}
+                                        className={`flex-shrink-0 px-2.5 py-2 rounded-lg text-center transition-colors ${isHoliday
+                                                ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
+                                                : 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200'
+                                            }`}
+                                    >
+                                        <p className={`text-[10px] ${dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-500' : ''}`}>
+                                            {dayNames[dayOfWeek]}
+                                        </p>
+                                        <p className="text-sm font-bold">{d.getDate()}</p>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        <p className="text-[10px] text-blue-500 mt-2 font-medium">
+                            💡 가장 빠른 배송일: {(() => {
+                                const d = new Date();
+                                d.setDate(d.getDate() + 2);
+                                while (d.getDay() === 0) d.setDate(d.getDate() + 1);
+                                return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+                            })()}
                         </p>
                     </div>
                 </div>

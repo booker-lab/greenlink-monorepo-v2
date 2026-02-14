@@ -1,6 +1,6 @@
 // 그린링크 v2 - 디어 오키드 초기 데이터 (1호 입점 농가)
 
-import type { Farm, Product, PinkTemperature, Review } from './types';
+import type { Farm, Product, PinkTemperature, Review, Order, DeliveryTask, DailyQuota } from './types';
 
 /** 디어 오키드 - 1호 입점 농가 */
 export const DEAR_ORCHID_FARM: Farm = {
@@ -185,3 +185,104 @@ export const MOCK_REVIEWS: Review[] = [
         helpful: 8,
     },
 ];
+
+// ───────── 배송 시스템 목 데이터 (PV5 MVP) ─────────
+
+/** Mock 주문 데이터 */
+export const MOCK_ORDERS: Order[] = [
+    {
+        id: 'order-001',
+        productId: 'prod-001',
+        farmId: 'farm-dear-orchid-001',
+        buyerName: '김지수',
+        buyerPhone: '010-1234-5678',
+        buyerAddress: '서울시 강남구 역삼동 123-45 그린아파트 301호',
+        quantity: 1,
+        totalPrice: 35000,
+        status: 'PREPARING',
+        deliveryDate: '2026-02-16',
+        orderedAt: '2026-02-14T10:30:00',
+        message: '부재 시 문 앞에 놓아주세요',
+        deliveryTaskId: 'del-001',
+    },
+    {
+        id: 'order-002',
+        productId: 'prod-003',
+        farmId: 'farm-dear-orchid-001',
+        buyerName: '박하늘',
+        buyerPhone: '010-9876-5432',
+        buyerAddress: '경기도 이천시 마장면 서이천로 456',
+        quantity: 2,
+        totalPrice: 130000,
+        status: 'ORDERED',
+        deliveryDate: '2026-02-18',
+        orderedAt: '2026-02-14T14:20:00',
+        message: '선물용 포장 부탁드립니다',
+    },
+    {
+        id: 'order-003',
+        productId: 'prod-002',
+        farmId: 'farm-dear-orchid-001',
+        buyerName: '이서준',
+        buyerPhone: '010-5555-7777',
+        buyerAddress: '서울시 송파구 잠실동 789 레이크힐 1205호',
+        quantity: 1,
+        totalPrice: 80000,
+        status: 'COMPLETED',
+        deliveryDate: '2026-02-13',
+        orderedAt: '2026-02-11T09:00:00',
+        deliveryTaskId: 'del-002',
+    },
+];
+
+/** Mock 배송 태스크 */
+export const MOCK_DELIVERY_TASKS: DeliveryTask[] = [
+    {
+        id: 'del-001',
+        orderId: 'order-001',
+        farmId: 'farm-dear-orchid-001',
+        status: 'PENDING',
+        pickupAddress: '경기도 이천시 마장면 디어오키드 농장',
+        deliveryAddress: '서울시 강남구 역삼동 123-45 그린아파트 301호',
+        recipientName: '김지수',
+        recipientPhone: '010-1234-5678',
+        items: ['보세란 (중품) 1분'],
+        priority: 1,
+        photoUrls: [],
+        notes: '부재 시 문 앞에 놓아주세요',
+        createdAt: '2026-02-14T10:30:00',
+    },
+    {
+        id: 'del-002',
+        orderId: 'order-003',
+        farmId: 'farm-dear-orchid-001',
+        status: 'DELIVERED',
+        pickupAddress: '경기도 이천시 마장면 디어오키드 농장',
+        deliveryAddress: '서울시 송파구 잠실동 789 레이크힐 1205호',
+        recipientName: '이서준',
+        recipientPhone: '010-5555-7777',
+        items: ['풍란 (대품) 1분'],
+        priority: 1,
+        photoUrls: ['📸'],
+        pickedUpAt: '2026-02-13T08:00:00',
+        deliveredAt: '2026-02-13T14:30:00',
+        createdAt: '2026-02-12T16:00:00',
+    },
+];
+
+/** 기본 일일 배송 쿼터 (2주치 생성 헬퍼) */
+export function generateDefaultQuotas(startDate: Date, days: number = 14): DailyQuota[] {
+    const quotas: DailyQuota[] = [];
+    for (let i = 0; i < days; i++) {
+        const d = new Date(startDate);
+        d.setDate(d.getDate() + i);
+        const dayOfWeek = d.getDay();
+        const dateStr = d.toISOString().split('T')[0];
+        quotas.push({
+            date: dateStr,
+            maxOrders: dayOfWeek === 0 ? 0 : dayOfWeek === 6 ? 10 : 15, // 일:휴무, 토:10, 평일:15
+            currentOrders: 0,
+        });
+    }
+    return quotas;
+}
