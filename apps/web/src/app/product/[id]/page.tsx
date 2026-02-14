@@ -139,7 +139,7 @@ export default function ProductDetailPage() {
 
             {/* ───────── 3. 판매자 프로필 (팔도감: 강원춘천 이용우) ───────── */}
             <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-                <button className="flex items-center gap-2 hover:opacity-80">
+                <Link href={`/farm/${farm.id}`} className="flex items-center gap-2 hover:opacity-80">
                     <div className="w-8 h-8 bg-gradient-to-br from-pink-400 to-pink-500 rounded-full flex items-center justify-center text-sm">
                         {farm.profileEmoji}
                     </div>
@@ -151,7 +151,7 @@ export default function ProductDetailPage() {
                         <span className="text-sm text-gray-800 font-bold">{farm.name}</span>
                         <ChevronRight className="w-4 h-4 text-gray-400" />
                     </div>
-                </button>
+                </Link>
                 <button className="p-2 hover:bg-gray-100 rounded-lg">
                     <Share2 className="w-5 h-5 text-gray-500" />
                 </button>

@@ -142,7 +142,7 @@ export default function DashboardPage() {
 
                         {/* 📱 내 스토어 미리보기 (Web 앱 연동) */}
                         <a
-                            href="http://localhost:3000"
+                            href={`http://localhost:3000/farm/${DEAR_ORCHID_FARM.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all group"

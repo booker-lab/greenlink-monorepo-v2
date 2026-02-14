@@ -133,15 +133,13 @@ export default function HomePage() {
 
                         {/* CTA */}
                         <div className="px-4 py-3 bg-white border-t border-green-100">
-                            <a
-                                href="http://localhost:3001/dashboard"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <Link
+                                href={`/farm/${farm.id}`}
                                 className="w-full flex items-center justify-center gap-2 py-2.5 text-green-700 font-semibold text-sm hover:bg-green-50 rounded-lg transition-colors"
                             >
                                 농장 프로필 보기
                                 <ChevronRight className="w-4 h-4" />
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
