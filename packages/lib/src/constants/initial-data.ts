@@ -255,6 +255,39 @@ export const MOCK_DELIVERY_TASKS: DeliveryTask[] = [
         createdAt: '2026-02-14T10:30:00',
     },
     {
+        id: 'del-003',
+        orderId: 'order-004',
+        farmId: 'farm-dear-orchid-001',
+        status: 'PENDING',
+        pickupAddress: '경기도 이천시 마장면 디어오키드 농장',
+        pickupCoords: { lat: 37.2747, lng: 127.4350 },
+        deliveryAddress: '서울시 성동구 성수동2가 315 성수타워 B동 801호',
+        deliveryCoords: { lat: 37.5445, lng: 127.0566 },
+        recipientName: '박민준',
+        recipientPhone: '010-2222-3333',
+        items: ['석곡 (특선) 1분'],
+        priority: 2,
+        photoUrls: [],
+        notes: '경비실에 맡겨주세요',
+        createdAt: '2026-02-14T11:00:00',
+    },
+    {
+        id: 'del-004',
+        orderId: 'order-005',
+        farmId: 'farm-dear-orchid-001',
+        status: 'PENDING',
+        pickupAddress: '경기도 이천시 마장면 디어오키드 농장',
+        pickupCoords: { lat: 37.2747, lng: 127.4350 },
+        deliveryAddress: '경기도 성남시 분당구 판교역로 235 H스퀘어 N동',
+        deliveryCoords: { lat: 37.3948, lng: 127.1112 },
+        recipientName: '최수아',
+        recipientPhone: '010-4444-5555',
+        items: ['풍란 (중품) 2분', '보세란 (소품) 1분'],
+        priority: 3,
+        photoUrls: [],
+        createdAt: '2026-02-14T11:30:00',
+    },
+    {
         id: 'del-002',
         orderId: 'order-003',
         farmId: 'farm-dear-orchid-001',
@@ -273,6 +306,7 @@ export const MOCK_DELIVERY_TASKS: DeliveryTask[] = [
         createdAt: '2026-02-12T16:00:00',
     },
 ];
+
 
 /** 기본 일일 배송 쿼터 (2주치 생성 헬퍼) */
 export function generateDefaultQuotas(startDate: Date, days: number = 14): DailyQuota[] {
