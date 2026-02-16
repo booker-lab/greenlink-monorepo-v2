@@ -11,6 +11,8 @@ import {
 import { useDeliveryStore, useOrderStore, useAuthStore } from '@greenlink/lib';
 import { DEAR_ORCHID_PRODUCTS } from '@greenlink/lib';
 import type { DeliveryTask, DeliveryStatus } from '@greenlink/lib';
+import LongPressButton from '../../components/LongPressButton';
+import { requestNotificationPermission, notifyStatusChange } from '../../lib/notifications';
 
 /* ── 상태별 설정 ── */
 const STATUS_CONFIG: Record<DeliveryStatus, { label: string; color: string; bgColor: string; borderColor: string; markerColor: string; icon: typeof Package }> = {
@@ -106,6 +108,11 @@ export default function DriverDeliveryPage() {
         if (!isAuthenticated) router.replace('/login');
     }, [isAuthenticated, router]);
 
+    // PWA: 알림 권한 요청
+    useEffect(() => {
+        if (isAuthenticated) requestNotificationPermission();
+    }, [isAuthenticated]);
+
     const handleLogout = () => { logout(); router.replace('/login'); };
 
     if (!isAuthenticated || !driver) return null;
@@ -142,6 +149,8 @@ export default function DriverDeliveryPage() {
             if (nextStatus === 'IN_TRANSIT') updateOrderStatus(order.id, 'DELIVERING');
             if (nextStatus === 'DELIVERED') updateOrderStatus(order.id, 'COMPLETED');
         }
+        // 푸시 알림 발송
+        notifyStatusChange(nextStatus, task.recipientName);
         if (nextStatus === 'DELIVERED') { setSelectedTask(task.id); setShowPhotoUpload(true); }
     };
 
@@ -404,12 +413,13 @@ export default function DriverDeliveryPage() {
                                                 <Navigation className="w-4 h-4 text-sky-400" />
                                             </a>
                                             {NEXT_STATUS[task.status] && (
-                                                <button
-                                                    onClick={() => handleStatusChange(task)}
-                                                    className={`flex-1 h-10 bg-gradient-to-r ${action.gradient} text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-lg text-sm active:scale-[0.97]`}
-                                                >
-                                                    {action.label}
-                                                </button>
+                                                <LongPressButton
+                                                    onConfirm={() => handleStatusChange(task)}
+                                                    label={action.label}
+                                                    gradient={action.gradient}
+                                                    className="flex-1 h-10"
+                                                    duration={1500}
+                                                />
                                             )}
                                         </div>
                                     </div>
@@ -505,12 +515,13 @@ export default function DriverDeliveryPage() {
                                                 <Navigation className="w-5 h-5 text-sky-400" />
                                             </a>
                                             {NEXT_STATUS[task.status] && (
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); handleStatusChange(task); }}
-                                                    className={`flex-1 h-11 bg-gradient-to-r ${action.gradient} text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-lg text-base active:scale-[0.97]`}
-                                                >
-                                                    {action.label}
-                                                </button>
+                                                <LongPressButton
+                                                    onConfirm={() => handleStatusChange(task)}
+                                                    label={action.label}
+                                                    gradient={action.gradient}
+                                                    className="flex-1 h-11"
+                                                    duration={1500}
+                                                />
                                             )}
                                         </div>
                                     </div>
