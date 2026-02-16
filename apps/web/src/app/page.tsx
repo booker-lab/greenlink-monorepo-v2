@@ -1,13 +1,15 @@
 'use client';
 
 import Link from "next/link";
-import { Search, ShoppingCart, Bell, Shield, MapPin, Users, ChevronRight } from "lucide-react";
+import { Search, ShoppingCart, Bell, Shield, MapPin, Users, ChevronRight, Flame, Sparkles } from "lucide-react";
 import HomeBanner from "@/components/home/HomeBanner";
-import { DEAR_ORCHID_FARM, DEAR_ORCHID_PRODUCTS } from "@greenlink/lib";
+import { DEAR_ORCHID_FARM, DEAR_ORCHID_PRODUCTS, useGroupBuyStore } from "@greenlink/lib";
 
 export default function HomePage() {
     const farm = DEAR_ORCHID_FARM;
     const products = DEAR_ORCHID_PRODUCTS.filter(p => p.status === 'active');
+    const { deals } = useGroupBuyStore();
+    const activeDeals = deals.filter(d => d.status === 'RECRUITING');
 
     return (
         <div className="min-h-screen pb-20">
@@ -37,17 +39,73 @@ export default function HomePage() {
 
             {/* Quick Category Icons */}
             <div className="bg-white p-4 border-b border-gray-100">
-                <div className="grid grid-cols-4 gap-4 text-center">
-                    {['🌿 채소', '🍎 과일', '🌸 화훼', '🌾 곡물'].map((category, idx) => (
-                        <Link key={idx} href="/category" className="flex flex-col items-center gap-2 hover:opacity-80">
-                            <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center text-2xl">
-                                {category.split(' ')[0]}
+                <div className="grid grid-cols-5 gap-3 text-center">
+                    {[
+                        { icon: '🌹', label: '절화', href: '/group-buy' },
+                        { icon: '🪴', label: '분화', href: '/group-buy' },
+                        { icon: '🌿', label: '관엽', href: '/group-buy' },
+                        { icon: '🌸', label: '난류', href: '/category' },
+                        { icon: '🛒', label: '공구', href: '/group-buy' },
+                    ].map((cat, idx) => (
+                        <Link key={idx} href={cat.href} className="flex flex-col items-center gap-1.5 hover:opacity-80">
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${cat.label === '공구' ? 'bg-green-100 ring-2 ring-green-300' : 'bg-green-50'
+                                }`}>
+                                {cat.icon}
                             </div>
-                            <span className="text-xs text-gray-600">{category.split(' ')[1]}</span>
+                            <span className={`text-xs ${cat.label === '공구' ? 'text-green-600 font-bold' : 'text-gray-600'
+                                }`}>{cat.label}</span>
                         </Link>
                     ))}
                 </div>
             </div>
+
+            {/* 🔥 공동구매 배너 */}
+            {activeDeals.length > 0 && (
+                <div className="bg-white border-b-8 border-gray-100">
+                    <div className="p-4 pb-2 flex items-center justify-between">
+                        <h2 className="font-bold text-gray-800 text-lg flex items-center gap-2">
+                            <Flame className="w-5 h-5 text-orange-500" />
+                            지금 모집 중인 공구
+                            <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-bold">{activeDeals.length}</span>
+                        </h2>
+                        <Link href="/group-buy" className="text-xs text-green-600 font-medium flex items-center gap-0.5">
+                            전체보기 <ChevronRight className="w-4 h-4" />
+                        </Link>
+                    </div>
+                    <div className="px-4 pb-4 space-y-3">
+                        {activeDeals.slice(0, 2).map(deal => {
+                            const progress = Math.round((deal.currentCount / deal.targetCount) * 100);
+                            const remaining = deal.targetCount - deal.currentCount;
+                            return (
+                                <Link key={deal.id} href={`/group-buy/${deal.id}`} className="block">
+                                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-100 p-4 hover:shadow-md transition-all active:scale-[0.98]">
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-3xl">{deal.image}</span>
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="font-bold text-sm text-gray-900 truncate">{deal.title}</h3>
+                                                <p className="text-lg font-black text-green-600">{deal.sellingPrice.toLocaleString()}원</p>
+                                            </div>
+                                            <div className="text-right flex-shrink-0">
+                                                <p className="text-xs text-gray-500">{deal.currentCount}/{deal.targetCount}명</p>
+                                                <p className="text-xs font-bold text-orange-600">{remaining}명 남음!</p>
+                                            </div>
+                                        </div>
+                                        <div className="mt-2 h-2 bg-green-100 rounded-full overflow-hidden">
+                                            <div
+                                                className={`h-full rounded-full ${progress >= 70
+                                                        ? 'bg-gradient-to-r from-orange-400 to-red-500'
+                                                        : 'bg-gradient-to-r from-green-400 to-emerald-500'
+                                                    }`}
+                                                style={{ width: `${progress}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
 
             {/* 🏡 우리 동네 추천 농장 - 당근마켓 비즈프로필 스타일 */}
             <div className="bg-white border-b-8 border-gray-100">

@@ -136,3 +136,69 @@ export interface DailyQuota {
     maxOrders: number;          // 최대 주문 수량
     currentOrders: number;      // 현재 주문 수량
 }
+
+// ───────── 공동구매(공구) 시스템 ─────────
+
+/** 경매 시세 데이터 (화훼 경매 시세 공공데이터 기반) */
+export interface AuctionItem {
+    id: string;
+    settlementDate: string;     // 정산일자
+    flowerType: string;         // 화훼구분명 (절화, 분화, 관엽 등)
+    itemName: string;           // 품목명 (장미, 국화, 백합 등)
+    varietyName: string;        // 품종명 (레드나오미, 샤넬 등)
+    grade: string;              // 등급명 (상, 중, 하)
+    maxPrice: number;           // 최고단가
+    minPrice: number;           // 최저단가
+    avgPrice: number;           // 평균단가
+    totalQuantity: number;      // 총수량
+    totalAmount: number;        // 총금액
+    unitSize: number;           // 1박스 수량 (예: 20본)
+}
+
+/** 공구 상태 */
+export type GroupBuyStatus =
+    | 'RECRUITING'    // 모집 중
+    | 'GOAL_MET'      // 목표 인원 달성 (사입 대기)
+    | 'PURCHASING'    // 경매장서 사입 중
+    | 'DELIVERING'    // 배송 중
+    | 'COMPLETED'     // 완료
+    | 'CANCELLED';    // 취소/불발
+
+/** 공구 참여자 */
+export interface GroupBuyParticipant {
+    id: string;
+    name: string;
+    phone: string;
+    address: string;
+    joinedAt: string;
+    quantity: number;           // 참여 수량 (기본 1)
+}
+
+/** 공동구매(공구) 상품 */
+export interface GroupBuyDeal {
+    id: string;
+    title: string;              // "프리미엄 장미 20본 공구"
+    description: string;        // 소비자용 설명
+    image: string;              // 상품 이미지 (emoji 또는 URL)
+    categoryId: string;         // 카테고리 ID
+    auctionRef?: AuctionItem;   // 참조 경매 시세
+    estimatedCost: number;      // 예상 사입가 (경매 평균가 기준)
+    sellingPrice: number;       // 관리자 설정 판매가
+    deliveryFee: number;        // 배송비 (인당)
+    targetCount: number;        // 목표 인원 (예: 12)
+    currentCount: number;       // 현재 참여 인원
+    status: GroupBuyStatus;
+    deadline: string;           // 모집 마감일 (ISO)
+    deliveryDate?: string;      // 예상 배송일
+    participants: GroupBuyParticipant[];
+    createdAt: string;
+}
+
+/** 화훼 카테고리 */
+export interface FlowerCategory {
+    id: string;
+    name: string;               // 절화, 분화, 관엽, 난류 등
+    icon: string;               // 이모지
+    description: string;
+    subcategories: string[];    // 장미, 국화, 백합 등 품목명
+}
