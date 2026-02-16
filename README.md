@@ -23,13 +23,17 @@ greenlink-monorepo/
 │   │       ├── order/[id]/         # 주문 상세 + 배송 추적
 │   │       └── mypage/             # 마이페이지
 │   │
-│   └── admin/                  # 농가/판매자 대시보드 (포트 3001)
+│   ├── admin/                  # 농가/판매자 대시보드 (포트 3001)
+│   │   └── src/app/
+│   │       ├── dashboard/          # 비즈프로필 홈 (그린 온도, 배송 요약)
+│   │       ├── delivery/           # 📋 배송 현황 확인 (읽기 전용)
+│   │       ├── delivery/settings/  # 📅 일일 배송 쿼터 설정
+│   │       ├── products/new/       # 상품 등록
+│   │       └── register/           # 사업자 등록
+│   │
+│   └── driver/                 # 🚚 배송기사 전용 앱 (포트 3002)
 │       └── src/app/
-│           ├── dashboard/          # 비즈프로필 홈 (그린 온도, 배송 요약)
-│           ├── delivery/           # 🚚 배송 관리 (상태 전환, 사진 업로드)
-│           ├── delivery/settings/  # 📅 일일 배송 쿼터 설정
-│           ├── products/new/       # 상품 등록
-│           └── register/           # 사업자 등록
+│           └── delivery/           # 배송 관리 (상태 전환, 네비, 사진)
 │
 ├── packages/
 │   ├── ui/             # 공용 UI 컴포넌트 (Button, Card, Input)
@@ -63,6 +67,9 @@ pnpm --filter @greenlink/web dev
 
 # 농가 대시보드만 (포트 3001)
 pnpm --filter @greenlink/admin dev
+
+# 배송기사 앱만 (포트 3002)
+pnpm --filter @greenlink/driver dev
 ```
 
 ### 빌드
@@ -93,10 +100,20 @@ pnpm build
 | 경로 | 페이지 | 설명 |
 |------|--------|------|
 | `/dashboard` | 홈 | 그린 온도, 오늘의 배송, 상품 관리 |
-| `/delivery` | 🚚 배송 관리 | 배송 목록 · 상태 전환 (큰 버튼) · 사진 업로드 |
+| `/delivery` | 📋 배송 현황 | 배송 상황 읽기 전용 확인 + 기사 앱 링크 |
 | `/delivery/settings` | 📅 쿼터 설정 | 일일 배송 수량 캘린더 · 빠른 설정 |
 | `/products/new` | 상품 등록 | 사진 + 가격 + 수량 간편 등록 |
 | `/register` | 사업자 등록 | 농업경영체 인증 |
+
+---
+
+## 🚚 배송기사 앱 (`apps/driver`, 포트 3002)
+
+> 다크 테마 UI — 운전 중 쉽게 조작할 수 있도록 큰 터치 영역
+
+| 경로 | 페이지 | 설명 |
+|------|--------|------|
+| `/delivery` | 배송 관리 | 상태 전환 (큰 CTA) · 카카오맵 네비 · 전화 · 사진 업로드 |
 
 ---
 

@@ -1,16 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-    ArrowLeft, Package, Truck, CheckCircle2, Camera, Phone,
-    MapPin, ChevronRight, Clock, AlertCircle, Settings,
-    Home, MessageSquare, Star, Image as ImageIcon
+    ArrowLeft, Package, Truck, CheckCircle2, ExternalLink,
+    MapPin, Clock, AlertCircle, Settings,
+    Home, MessageSquare, Star
 } from 'lucide-react';
-import { useDeliveryStore, useOrderStore } from '@greenlink/lib';
-import { DEAR_ORCHID_FARM, DEAR_ORCHID_PRODUCTS } from '@greenlink/lib';
-import type { DeliveryTask, DeliveryStatus } from '@greenlink/lib';
+import { useDeliveryStore } from '@greenlink/lib';
+import { DEAR_ORCHID_PRODUCTS } from '@greenlink/lib';
+import type { DeliveryStatus } from '@greenlink/lib';
 
 const STATUS_CONFIG: Record<DeliveryStatus, { label: string; color: string; bgColor: string; icon: typeof Package }> = {
     PENDING: { label: '픽업 대기', color: 'text-orange-600', bgColor: 'bg-orange-50 border-orange-200', icon: Package },
@@ -19,56 +18,12 @@ const STATUS_CONFIG: Record<DeliveryStatus, { label: string; color: string; bgCo
     DELIVERED: { label: '배송 완료', color: 'text-green-600', bgColor: 'bg-green-50 border-green-200', icon: CheckCircle2 },
 };
 
-const NEXT_STATUS: Record<DeliveryStatus, DeliveryStatus | null> = {
-    PENDING: 'PICKED_UP',
-    PICKED_UP: 'IN_TRANSIT',
-    IN_TRANSIT: 'DELIVERED',
-    DELIVERED: null,
-};
-
-const NEXT_ACTION_LABEL: Record<DeliveryStatus, string> = {
-    PENDING: '📦 픽업 완료',
-    PICKED_UP: '🚚 배송 출발',
-    IN_TRANSIT: '✅ 배송 완료',
-    DELIVERED: '',
-};
-
-export default function DeliveryPage() {
+export default function AdminDeliveryPage() {
     const router = useRouter();
-    const { tasks, updateTaskStatus, addPhotoToTask } = useDeliveryStore();
-    const { orders, updateOrderStatus } = useOrderStore();
-    const [selectedTask, setSelectedTask] = useState<string | null>(null);
-    const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+    const { tasks } = useDeliveryStore();
 
     const activeTasks = tasks.filter(t => t.status !== 'DELIVERED');
     const completedTasks = tasks.filter(t => t.status === 'DELIVERED');
-
-    const handleStatusChange = (task: DeliveryTask) => {
-        const nextStatus = NEXT_STATUS[task.status];
-        if (!nextStatus) return;
-
-        updateTaskStatus(task.id, nextStatus);
-
-        // 주문 상태도 동기화
-        const order = orders.find(o => o.id === task.orderId);
-        if (order) {
-            if (nextStatus === 'PICKED_UP') updateOrderStatus(order.id, 'DISPATCHED');
-            if (nextStatus === 'IN_TRANSIT') updateOrderStatus(order.id, 'DELIVERING');
-            if (nextStatus === 'DELIVERED') updateOrderStatus(order.id, 'COMPLETED');
-        }
-
-        if (nextStatus === 'DELIVERED') {
-            setSelectedTask(task.id);
-            setShowPhotoUpload(true);
-        }
-    };
-
-    const handlePhotoUpload = (taskId: string) => {
-        // MVP: 이모지로 사진 대체
-        addPhotoToTask(taskId, '📸');
-        setShowPhotoUpload(false);
-        setSelectedTask(null);
-    };
 
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
@@ -78,12 +33,34 @@ export default function DeliveryPage() {
                     <button onClick={() => router.push('/dashboard')} className="p-1">
                         <ArrowLeft className="w-6 h-6 text-gray-800" />
                     </button>
-                    <h1 className="text-lg font-bold text-gray-900">🚚 배송 관리</h1>
+                    <h1 className="text-lg font-bold text-gray-900">📋 배송 현황</h1>
                     <Link href="/delivery/settings" className="p-2 hover:bg-gray-100 rounded-lg">
                         <Settings className="w-5 h-5 text-gray-600" />
                     </Link>
                 </div>
             </header>
+
+            {/* 기사 앱 연결 안내 */}
+            <div className="px-4 pt-4">
+                <a
+                    href="http://localhost:3002"
+                    target="_blank"
+                    className="block bg-gradient-to-r from-sky-50 to-blue-50 rounded-2xl p-4 border border-sky-200 hover:shadow-md transition-all"
+                >
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                                <Truck className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-gray-900 text-sm">배송 기사 앱 열기</p>
+                                <p className="text-[10px] text-sky-600 mt-0.5">상태 전환, 사진 업로드는 기사 앱에서</p>
+                            </div>
+                        </div>
+                        <ExternalLink className="w-5 h-5 text-sky-400" />
+                    </div>
+                </a>
+            </div>
 
             {/* 오늘의 배송 현황 요약 */}
             <div className="px-4 py-4">
@@ -103,7 +80,7 @@ export default function DeliveryPage() {
                 </div>
             </div>
 
-            {/* 진행 중인 배송 */}
+            {/* 진행 중인 배송 (읽기 전용) */}
             {activeTasks.length > 0 && (
                 <div className="px-4 mb-4">
                     <h2 className="text-sm font-bold text-gray-700 mb-3">진행 중인 배송</h2>
@@ -146,33 +123,11 @@ export default function DeliveryPage() {
 
                                     {/* 메모 */}
                                     {task.notes && (
-                                        <div className="px-4 py-2 flex items-start gap-2">
+                                        <div className="px-4 pb-3 flex items-start gap-2">
                                             <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
                                             <p className="text-sm text-amber-700 font-medium">{task.notes}</p>
                                         </div>
                                     )}
-
-                                    {/* 액션 버튼들 (운전 중 쉽게 누를 수 있도록 큰 사이즈) */}
-                                    <div className="p-4 pt-2 flex gap-2">
-                                        {/* 전화 */}
-                                        <a
-                                            href={`tel:${task.recipientPhone}`}
-                                            className="flex items-center justify-center gap-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-700 font-medium text-sm transition-colors"
-                                        >
-                                            <Phone className="w-4 h-4" />
-                                            연락
-                                        </a>
-
-                                        {/* 상태 전환 (메인 CTA) */}
-                                        {NEXT_STATUS[task.status] && (
-                                            <button
-                                                onClick={() => handleStatusChange(task)}
-                                                className="flex-1 py-3.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors shadow-lg shadow-green-200 text-center text-base"
-                                            >
-                                                {NEXT_ACTION_LABEL[task.status]}
-                                            </button>
-                                        )}
-                                    </div>
                                 </div>
                             );
                         })}
@@ -210,40 +165,6 @@ export default function DeliveryPage() {
                                 )}
                             </div>
                         ))}
-                    </div>
-                </div>
-            )}
-
-            {/* 사진 업로드 모달 */}
-            {showPhotoUpload && selectedTask && (
-                <div className="fixed inset-0 bg-black/50 z-[100] flex items-end">
-                    <div className="bg-white w-full rounded-t-3xl p-6 animate-slide-up">
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">📸 배송 완료 사진</h3>
-                        <p className="text-sm text-gray-500 mb-4">문 앞 사진을 촬영해주세요. 고객에게 전송됩니다.</p>
-
-                        <div className="grid grid-cols-2 gap-3 mb-4">
-                            <button
-                                onClick={() => handlePhotoUpload(selectedTask)}
-                                className="aspect-square border-2 border-dashed border-green-300 rounded-2xl flex flex-col items-center justify-center text-green-500 hover:bg-green-50 transition-colors"
-                            >
-                                <Camera className="w-8 h-8 mb-2" />
-                                <span className="text-sm font-medium">촬영하기</span>
-                            </button>
-                            <button
-                                onClick={() => handlePhotoUpload(selectedTask)}
-                                className="aspect-square border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center text-gray-400 hover:bg-gray-50 transition-colors"
-                            >
-                                <ImageIcon className="w-8 h-8 mb-2" />
-                                <span className="text-sm font-medium">갤러리</span>
-                            </button>
-                        </div>
-
-                        <button
-                            onClick={() => { setShowPhotoUpload(false); setSelectedTask(null); }}
-                            className="w-full py-3 border border-gray-200 rounded-xl text-gray-600 font-medium hover:bg-gray-50"
-                        >
-                            나중에 하기
-                        </button>
                     </div>
                 </div>
             )}
