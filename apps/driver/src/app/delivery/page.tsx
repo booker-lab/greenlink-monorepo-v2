@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
     Package, Truck, CheckCircle2, Camera, Phone, Navigation,
     MapPin, ChevronRight, AlertCircle, User, Clock,
     Image as ImageIcon, LogOut
 } from 'lucide-react';
-import { useDeliveryStore, useOrderStore } from '@greenlink/lib';
+import { useDeliveryStore, useOrderStore, useAuthStore } from '@greenlink/lib';
 import { DEAR_ORCHID_PRODUCTS } from '@greenlink/lib';
 import type { DeliveryTask, DeliveryStatus } from '@greenlink/lib';
 
@@ -32,10 +33,24 @@ const NEXT_ACTION: Record<DeliveryStatus, { label: string; gradient: string }> =
 };
 
 export default function DriverDeliveryPage() {
+    const router = useRouter();
+    const { driver, isAuthenticated, logout } = useAuthStore();
     const { tasks, updateTaskStatus, addPhotoToTask } = useDeliveryStore();
     const { orders, updateOrderStatus } = useOrderStore();
     const [selectedTask, setSelectedTask] = useState<string | null>(null);
     const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+
+    // 인증 가드
+    useEffect(() => {
+        if (!isAuthenticated) router.replace('/login');
+    }, [isAuthenticated, router]);
+
+    const handleLogout = () => {
+        logout();
+        router.replace('/login');
+    };
+
+    if (!isAuthenticated || !driver) return null;
 
     const activeTasks = tasks.filter(t => t.status !== 'DELIVERED');
     const completedTasks = tasks.filter(t => t.status === 'DELIVERED');
@@ -77,8 +92,8 @@ export default function DriverDeliveryPage() {
                             <Truck className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-base font-bold text-white">그린링크 드라이버</h1>
-                            <p className="text-[10px] text-gray-500">PV5 · 디어 오키드</p>
+                            <h1 className="text-base font-bold text-white">{driver.name} 기사님</h1>
+                            <p className="text-[10px] text-gray-500">{driver.vehicleInfo} · 디어 오키드</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -86,6 +101,9 @@ export default function DriverDeliveryPage() {
                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                             <span className="text-[10px] text-emerald-400 font-medium">운행 중</span>
                         </div>
+                        <button onClick={handleLogout} className="p-1.5 hover:bg-gray-800 rounded-lg transition-colors">
+                            <LogOut className="w-4 h-4 text-gray-500" />
+                        </button>
                     </div>
                 </div>
             </header>
