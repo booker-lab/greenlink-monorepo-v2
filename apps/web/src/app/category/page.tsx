@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ChevronRight, TrendingUp, Package, Leaf, Info, Star, Clock, Droplets, Tag } from 'lucide-react';
+import { ArrowLeft, ChevronRight, TrendingUp, Package, Leaf, Info, Clock, Droplets, CheckCircle2 } from 'lucide-react';
 import { FLOWER_CATEGORIES, CATALOG_ITEMS, AVAILABILITY_LABEL } from '@greenlink/lib';
 import type { CatalogItem } from '@greenlink/lib';
 
@@ -41,7 +41,7 @@ function ItemDetailCard({ item, onClose }: { item: CatalogItem; onClose: () => v
                 <div className="p-5">
                     {/* 제목 */}
                     <h3 className="text-xl font-black text-gray-900">{item.name}</h3>
-                    <p className="text-sm text-gray-500 mt-1">{item.itemName} · {item.varietyName} · {item.grade}등급</p>
+                    <p className="text-sm text-gray-500 mt-1">{item.varietyName} 품종</p>
 
                     {/* 태그 */}
                     <div className="flex flex-wrap gap-1.5 mt-3">
@@ -52,19 +52,12 @@ function ItemDetailCard({ item, onClose }: { item: CatalogItem; onClose: () => v
                         ))}
                     </div>
 
-                    {/* 가격 정보 */}
-                    <div className="mt-4 p-3 bg-gray-50 rounded-xl">
-                        <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-500">경매 평균 단가</span>
-                            <span className="font-bold text-green-600">{item.avgPrice.toLocaleString()}원 / {item.unit}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm mt-2">
-                            <span className="text-gray-500">1박스 수량</span>
-                            <span className="font-medium text-gray-700">{item.unitSize}{item.unit}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm mt-2">
-                            <span className="text-gray-500">일일 출하량</span>
-                            <span className="font-medium text-gray-700">{item.totalQuantity.toLocaleString()}{item.unit}</span>
+                    {/* 구매 안정성 */}
+                    <div className="mt-4 p-3 bg-green-50 rounded-xl flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
+                        <div>
+                            <p className="text-sm font-bold text-green-800">안정적 공급 품목</p>
+                            <p className="text-xs text-green-600 mt-0.5">전국 화훼공판장에서 꾸준히 거래되는 검증된 품목입니다</p>
                         </div>
                     </div>
 
@@ -94,10 +87,7 @@ function ItemDetailCard({ item, onClose }: { item: CatalogItem; onClose: () => v
                         </div>
                     </div>
 
-                    {/* 출처 */}
-                    <p className="text-[10px] text-gray-400 text-center mt-4">
-                        시세 데이터 출처: 한국농수산식품유통공사 화훼 경매 시세 (data.go.kr)
-                    </p>
+
 
                     {/* 공구 페이지로 이동 */}
                     <Link
@@ -129,9 +119,8 @@ function ItemCard({ item, onClick }: { item: CatalogItem; onClick: () => void })
             <div className="p-3">
                 <h3 className="font-bold text-sm text-gray-900 line-clamp-1">{item.name}</h3>
                 <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">{item.description}</p>
-                <div className="flex items-center justify-between mt-2">
-                    <span className="text-xs text-green-600 font-bold">{item.avgPrice.toLocaleString()}원/{item.unit}</span>
-                    <span className="text-[10px] text-gray-400">{item.grade}등급</span>
+                <div className="flex items-center mt-2">
+                    <span className={`text-[10px] font-medium ${avail.color}`}>{avail.emoji} {avail.label}</span>
                 </div>
             </div>
         </button>
@@ -165,8 +154,8 @@ export default function CategoryPage() {
                     <button
                         onClick={() => setSelectedCat('all')}
                         className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedCat === 'all'
-                                ? 'bg-green-600 text-white shadow-md shadow-green-200'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            ? 'bg-green-600 text-white shadow-md shadow-green-200'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                             }`}
                     >
                         전체 ({CATALOG_ITEMS.length})
@@ -179,8 +168,8 @@ export default function CategoryPage() {
                                 key={cat.id}
                                 onClick={() => setSelectedCat(cat.id)}
                                 className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCat === cat.id
-                                        ? 'bg-green-600 text-white shadow-md shadow-green-200'
-                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    ? 'bg-green-600 text-white shadow-md shadow-green-200'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                     }`}
                             >
                                 {cat.icon} {cat.name} ({count})
