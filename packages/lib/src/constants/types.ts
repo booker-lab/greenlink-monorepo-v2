@@ -116,7 +116,9 @@ export interface DeliveryTask {
     farmId: string;
     status: DeliveryStatus;
     pickupAddress: string;      // 픽업지 (농장)
+    pickupCoords: { lat: number; lng: number };  // 픽업지 좌표
     deliveryAddress: string;    // 배송지
+    deliveryCoords: { lat: number; lng: number }; // 배송지 좌표
     recipientName: string;
     recipientPhone: string;
     items: string[];            // 상품명 리스트
